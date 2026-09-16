@@ -49,10 +49,18 @@ class UrlClassifier:
     def __init__(self):
         self.model = None
         self.model_loaded = False
-        for path in ["ml-models/phishing/model.joblib", "../ml-models/phishing/model.joblib"]:
-            if os.path.exists(path):
+        candidate_paths = [
+            os.path.join(os.path.dirname(__file__), "..", "..", "..", "ml-models", "phishing", "model.joblib"),
+            os.path.join(os.path.dirname(__file__), "..", "..", "ml-models", "phishing", "model.joblib"),
+            "ml-models/phishing/model.joblib",
+            "../ml-models/phishing/model.joblib",
+            "backend/ml-models/phishing/model.joblib"
+        ]
+        for path in candidate_paths:
+            abs_p = os.path.abspath(path)
+            if os.path.exists(abs_p):
                 try:
-                    self.model = joblib.load(path)
+                    self.model = joblib.load(abs_p)
                     self.model_loaded = True
                     break
                 except Exception:

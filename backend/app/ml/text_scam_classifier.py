@@ -66,9 +66,16 @@ class TextScamClassifier:
         self.model = None
         self.vectorizer = None
         self.model_loaded = False
-        for prefix in ["ml-models/scam_detection", "../ml-models/scam_detection"]:
-            m_path = os.path.join(prefix, "model.joblib")
-            v_path = os.path.join(prefix, "vectorizer.joblib")
+        candidate_prefixes = [
+            os.path.join(os.path.dirname(__file__), "..", "..", "..", "ml-models", "scam_detection"),
+            os.path.join(os.path.dirname(__file__), "..", "..", "ml-models", "scam_detection"),
+            "ml-models/scam_detection",
+            "../ml-models/scam_detection",
+            "backend/ml-models/scam_detection"
+        ]
+        for prefix in candidate_prefixes:
+            m_path = os.path.abspath(os.path.join(prefix, "model.joblib"))
+            v_path = os.path.abspath(os.path.join(prefix, "vectorizer.joblib"))
             if os.path.exists(m_path) and os.path.exists(v_path):
                 try:
                     self.model = joblib.load(m_path)

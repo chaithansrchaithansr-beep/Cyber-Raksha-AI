@@ -1,0 +1,8 @@
+{
+  "threshold": 0.35,
+  "weights": {
+    "threat_type": 0.4,
+    "target_brand": 0.35,
+    "jaccard_text": 0.25
+  }
+}

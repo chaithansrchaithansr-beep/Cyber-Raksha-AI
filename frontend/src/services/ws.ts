@@ -1,12 +1,26 @@
 type MessageCallback = (data: any) => void;
 
+const getDefaultWsUrl = (): string => {
+  if (import.meta.env.VITE_WS_URL) {
+    return import.meta.env.VITE_WS_URL;
+  }
+  const envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    const cleanUrl = envUrl.trim();
+    const wsProto = cleanUrl.startsWith('https') ? 'wss' : 'ws';
+    const host = cleanUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+    return `${wsProto}://${host}/ws`;
+  }
+  return 'ws://localhost:8000/ws';
+};
+
 class WebSocketClient {
   private socket: WebSocket | null = null;
   private listeners: MessageCallback[] = [];
   private reconnectInterval: number = 4000;
   private isExplicitlyClosed: boolean = false;
 
-  public connect(url: string = 'ws://localhost:8000/ws') {
+  public connect(url: string = getDefaultWsUrl()) {
     this.isExplicitlyClosed = false;
     try {
       this.socket = new WebSocket(url);

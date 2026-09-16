@@ -3,7 +3,16 @@ import {
   NationalAnalytics, HeatmapState, User, UserSession, TokenResponse 
 } from '../types';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const getApiBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    const cleanUrl = envUrl.trim().replace(/\/+$/, '');
+    return cleanUrl.endsWith('/api/v1') ? cleanUrl : `${cleanUrl}/api/v1`;
+  }
+  return 'http://localhost:8000/api/v1';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 function getAuthHeader(): HeadersInit {
   const token = localStorage.getItem('cr_token');
