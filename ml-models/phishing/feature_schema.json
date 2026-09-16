@@ -1,0 +1,12 @@
+{
+  "features": [
+    "url_length",
+    "subdomains",
+    "is_ip",
+    "entropy",
+    "keywords_count",
+    "has_https"
+  ],
+  "version": "1.4.2",
+  "model_type": "RandomForestClassifier"
+}
