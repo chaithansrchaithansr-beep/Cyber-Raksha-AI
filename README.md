@@ -4,6 +4,12 @@
 > **Defensive Cybersecurity, Threat Correlation, Citizen Protection, and Autonomous Threat Intelligence.**  
 > Built for national-level innovation showcases, hackathons, and enterprise digital defense.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel%20Production-00f2fe?style=for-the-badge&logo=vercel&logoColor=white)](https://cyber-raksha-ai-ayw5.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Deployment-Live%20Ready-success?style=for-the-badge&logo=vercel)](https://cyber-raksha-ai-ayw5.vercel.app)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Cyber--Raksha--AI-181717?style=for-the-badge&logo=github)](https://github.com/chaithansrchaithansr-beep/Cyber-Raksha-AI)
+
+🌐 **Live Application URL:** [https://cyber-raksha-ai-ayw5.vercel.app](https://cyber-raksha-ai-ayw5.vercel.app)
+
 ---
 
 ## 🌟 Executive Overview
@@ -166,4 +172,23 @@ CYBER RAKSHA AI is built exclusively for **defensive security monitoring, digita
 
 ---
 
+## 🌐 Live Production Demo
+
+Experience the **CYBER RAKSHA AI** defense platform live on Vercel:
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-cyber--raksha--ai--ayw5.vercel.app-00f2fe?style=for-the-badge&logo=vercel&logoColor=white)](https://cyber-raksha-ai-ayw5.vercel.app)
+
+* **Production URL:** [https://cyber-raksha-ai-ayw5.vercel.app](https://cyber-raksha-ai-ayw5.vercel.app)
+* **Alternative Deployment URL:** [https://cyber-raksha-ai-ayw5-70et1po6f-chaithu4.vercel.app](https://cyber-raksha-ai-ayw5-70et1po6f-chaithu4.vercel.app)
+
+### 🔑 1-Click Demo Accounts:
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Citizen** | `citizen@cyberraksha.gov.in` | `Citizen@123` *(or `demo123`)* |
+| **Organization** | `org@infosec-defense.in` | `OrgAdmin@123` *(or `demo123`)* |
+| **Administrator** | `admin@cyberraksha.gov.in` | `CyberRaksha@Admin2026` *(or `demo123`)* |
+
+---
+
 *Developed for the National Cyber Safety Innovation Initiative.*
+

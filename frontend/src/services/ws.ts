@@ -7,9 +7,14 @@ const getDefaultWsUrl = (): string => {
   const envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
   if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
     const cleanUrl = envUrl.trim();
-    const wsProto = cleanUrl.startsWith('https') ? 'wss' : 'ws';
+    const wsProto = cleanUrl.startsWith('http://') ? 'ws' : 'wss';
     const host = cleanUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
     return `${wsProto}://${host}/ws`;
+  }
+  // Production fallback: when running on live deployment (not localhost), derive from current origin
+  if (typeof window !== 'undefined' && window.location && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    return `${wsProto}://${window.location.host}/ws`;
   }
   return 'ws://localhost:8000/ws';
 };

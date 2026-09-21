@@ -1,0 +1,11 @@
+{
+  "name": "cyber-raksha-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "National Cyber Threat Intelligence & Digital Scam Protection Platform",
+  "homepage": "https://cyber-raksha-ai-ayw5.vercel.app",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev"
+  }
+}
