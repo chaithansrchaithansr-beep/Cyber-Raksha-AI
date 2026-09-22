@@ -31,48 +31,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const storedToken = localStorage.getItem('cr_token');
       const storedRefresh = localStorage.getItem('cr_refresh_token');
 
-      if (storedToken) {
-        if (storedToken.startsWith('cr_demo_token_')) {
-          const role = (storedToken.split('_')[3] || 'citizen') as Role;
-          const mockUsers: Record<Role, User> = {
-            citizen: {
-              id: 1,
-              name: 'Aarav Sharma',
-              email: 'citizen@cyberraksha.gov.in',
-              role: 'citizen',
-              language: 'en',
-              is_active: true,
-              mfa_enabled: false,
-              created_at: new Date().toISOString()
-            },
-            organization: {
-              id: 2,
-              name: 'Infosec Operations Lead',
-              email: 'org@infosec-defense.in',
-              role: 'organization',
-              language: 'en',
-              is_active: true,
-              mfa_enabled: true,
-              created_at: new Date().toISOString()
-            },
-            admin: {
-              id: 3,
-              name: 'National SecOps Director',
-              email: 'admin@cyberraksha.gov.in',
-              role: 'admin',
-              language: 'en',
-              is_active: true,
-              mfa_enabled: true,
-              created_at: new Date().toISOString()
-            }
-          };
-          setUser(mockUsers[role] || mockUsers.citizen);
-          setToken(storedToken);
-          setRefreshToken(storedRefresh);
-          setIsLoading(false);
-          return;
-        }
+      // Purge any legacy demo tokens
+      if (storedToken && storedToken.startsWith('cr_demo_token_')) {
+        clearSession();
+        setIsLoading(false);
+        return;
+      }
 
+      if (storedToken) {
         try {
           const profile = await api.auth.getProfile();
           setUser(profile);
@@ -98,7 +64,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
       } else {
-        // No stored session: keep user logged out
         setUser(null);
       }
       setIsLoading(false);
@@ -131,53 +96,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await api.auth.login(credentials);
       setAuthData(data);
       return data.user;
-    } catch (err) {
-      console.warn('Backend unavailable, activating demo mode authentication:', err);
-      const email = (credentials.email || '').toLowerCase().trim();
-      let role: Role = 'citizen';
-      if (email.includes('admin') || email.includes('command') || email.includes('secops')) {
-        role = 'admin';
-      } else if (email.includes('org') || email.includes('infosec')) {
-        role = 'organization';
-      }
-
-      const mockUsers: Record<Role, User> = {
-        citizen: {
-          id: 1,
-          name: 'Aarav Sharma',
-          email: credentials.email || 'citizen@cyberraksha.gov.in',
-          role: 'citizen',
-          language: 'en',
-          is_active: true,
-          mfa_enabled: false,
-          created_at: new Date().toISOString()
-        },
-        organization: {
-          id: 2,
-          name: 'Infosec Operations Lead',
-          email: credentials.email || 'org@infosec-defense.in',
-          role: 'organization',
-          language: 'en',
-          is_active: true,
-          mfa_enabled: true,
-          created_at: new Date().toISOString()
-        },
-        admin: {
-          id: 3,
-          name: 'National SecOps Director',
-          email: credentials.email || 'admin@cyberraksha.gov.in',
-          role: 'admin',
-          language: 'en',
-          is_active: true,
-          mfa_enabled: true,
-          created_at: new Date().toISOString()
-        }
-      };
-
-      const fallbackUser = mockUsers[role];
-      const mockToken = `cr_demo_token_${role}_${Date.now()}`;
-      setAuthData({ access_token: mockToken, refresh_token: `cr_demo_refresh_${Date.now()}`, user: fallbackUser });
-      return fallbackUser;
     } finally {
       setIsLoading(false);
     }
@@ -189,22 +107,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await api.auth.register(userData);
       setAuthData(data);
       return data.user;
-    } catch (err) {
-      console.warn('Backend unavailable, activating demo mode registration:', err);
-      const role: Role = userData.role || 'citizen';
-      const fallbackUser: User = {
-        id: Math.floor(Math.random() * 1000) + 10,
-        name: userData.name || 'Registered Citizen',
-        email: userData.email,
-        role: role,
-        language: userData.language || 'en',
-        is_active: true,
-        mfa_enabled: false,
-        created_at: new Date().toISOString()
-      };
-      const mockToken = `cr_demo_token_${role}_${Date.now()}`;
-      setAuthData({ access_token: mockToken, refresh_token: `cr_demo_refresh_${Date.now()}`, user: fallbackUser });
-      return fallbackUser;
     } finally {
       setIsLoading(false);
     }
@@ -216,44 +118,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await api.auth.quickLogin(role);
       setAuthData(data);
       return data.user;
-    } catch (err) {
-      console.warn('Backend unavailable, activating tier authorization demo mode:', err);
-      const mockUsers: Record<Role, User> = {
-        citizen: {
-          id: 1,
-          name: 'Aarav Sharma',
-          email: 'citizen@cyberraksha.gov.in',
-          role: 'citizen',
-          language: 'en',
-          is_active: true,
-          mfa_enabled: false,
-          created_at: new Date().toISOString()
-        },
-        organization: {
-          id: 2,
-          name: 'Infosec Operations Lead',
-          email: 'org@infosec-defense.in',
-          role: 'organization',
-          language: 'en',
-          is_active: true,
-          mfa_enabled: true,
-          created_at: new Date().toISOString()
-        },
-        admin: {
-          id: 3,
-          name: 'National SecOps Director',
-          email: 'admin@cyberraksha.gov.in',
-          role: 'admin',
-          language: 'en',
-          is_active: true,
-          mfa_enabled: true,
-          created_at: new Date().toISOString()
-        }
-      };
-      const fallbackUser = mockUsers[role];
-      const mockToken = `cr_demo_token_${role}_${Date.now()}`;
-      setAuthData({ access_token: mockToken, refresh_token: `cr_demo_refresh_${Date.now()}`, user: fallbackUser });
-      return fallbackUser;
     } finally {
       setIsLoading(false);
     }
@@ -268,7 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await api.auth.logout(currentRefresh);
       }
     } catch (_) {
-      // Proceed with local logout regardless of network state
+      // Clean local session
     } finally {
       clearSession();
     }

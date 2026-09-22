@@ -2,9 +2,9 @@
 ### AI-Powered National Cyber Threat Intelligence & Digital Scam Protection Platform
 
 > **Defensive Cybersecurity, Threat Correlation, Citizen Protection, and Autonomous Threat Intelligence.**  
-> Built for national-level innovation showcases, hackathons, and enterprise digital defense.
+> Built for national-level cybersecurity defense, real-time threat intelligence, and enterprise digital defense.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel%20Production-00f2fe?style=for-the-badge&logo=vercel&logoColor=white)](https://cyber-raksha-ai-ayw5.vercel.app)
+[![Live Platform](https://img.shields.io/badge/Live%20Platform-Vercel%20Production-00f2fe?style=for-the-badge&logo=vercel&logoColor=white)](https://cyber-raksha-ai-ayw5.vercel.app)
 [![Vercel Deployment](https://img.shields.io/badge/Deployment-Live%20Ready-success?style=for-the-badge&logo=vercel)](https://cyber-raksha-ai-ayw5.vercel.app)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Cyber--Raksha--AI-181717?style=for-the-badge&logo=github)](https://github.com/chaithansrchaithansr-beep/Cyber-Raksha-AI)
 
@@ -26,8 +26,8 @@ Unlike basic scanners that treat threat vectors in silos, CYBER RAKSHA AI introd
 * **Module 01 — AI Phishing URL Scanner:** Heuristic lexical extraction (Shannon entropy, subdomain depth, lookalike brand spoofing, IP hosting) paired with pre-trained ML Random Forest classifiers.
 * **Module 02 — Social Engineering Email Analyzer:** Parses email headers, urgency extortion signals, deceptive sender addresses, and credential harvesting forms.
 * **Module 03 — SMS & WhatsApp Scam Detector:** Indian scam taxonomy NLP engine covering UPI PIN cashback traps, electricity bill disconnection extortion, Telegram fake task jobs, and KYC bank suspensions.
-* **Module 04 — Fake Website & DOM Analyzer:** Brand impersonation detector analyzing DOM visual metrics, form targets, and certificate trustworthiness.
-* **Module 05 — Screenshot & Payment OCR Analyzer:** Detects manipulated PhonePe/Paytm/GPay payment receipts, font discrepancies, synthetic transaction IDs, and embedded scam copy.
+* **Module 04 — Fake Website & DOM Analyzer:** Brand impersonation detector performing live asynchronous DOM inspection, form harvesting targets, and SSL certificate verification.
+* **Module 05 — Screenshot & Payment OCR Analyzer:** Powered by native Windows OCR (WinRT) and computer vision heuristics to extract live text, detect fake transaction IDs, manipulated timestamps, and fraudulent payment copy.
 * **Module 06 — QR Code Security Auditor:** Decodes QR payloads, detecting malicious UPI debit intents (`upi://pay?am=...`) and phishing redirections before execution.
 
 ### 2. Core Innovation: Cyber Threat Fusion Engine
@@ -40,7 +40,7 @@ Unlike basic scanners that treat threat vectors in silos, CYBER RAKSHA AI introd
 * **Module 10 — Privacy-Preserving India Heatmap:** Real-time geospatial state-level threat intelligence across 18 Indian states without disclosing victim GPS or personal identities.
 * **Module 11 — National Analytics Dashboard:** Recharts-powered temporal line charts, vector distributions, and CSV/JSON telemetry export.
 * **Module 08 — Community Threat Intelligence & Auto-PII Sanitizer:** Live crowdsourced threat reporting with **automatic client/server PII stripping** (masking mobile numbers, Aadhaar, PAN, card numbers, emails, and OTPs).
-* **Module 07 — Real-Time WebSocket Threat Alert Radar:** Instant push notifications for critical threat campaigns with a 1-click Hackathon demo trigger.
+* **Module 07 — Real-Time WebSocket Threat Alert Radar:** Instant push notifications for critical threat campaigns with SecOps live threat drill broadcast capabilities.
 * **Module 14 — Automated Incident Report Generator:** Generates official ReportLab PDF reports complete with a cryptographic **SHA-256 integrity hash**.
 * **Module 12 — Defensive AI Cyber Safety Assistant:** Context-aware incident recovery assistant with strict ethical safety guardrails (politely refuses and redirects malicious offensive hacking requests).
 * **Module 26 — Cyber Awareness Academy:** Interactive learning tracks, quizzes, and digital defense badges.
@@ -74,7 +74,7 @@ Unlike basic scanners that treat threat vectors in silos, CYBER RAKSHA AI introd
       | Threat Services  |                                  |   AI/ML Models   |
       | • PII Sanitizer  |                                  | • Random Forest  |
       | • Scoring Engine |                                  | • TF-IDF + LogReg|
-      | • Fusion Engine  |                                  | • OCR Engine     |
+      | • Fusion Engine  |                                  | • WinRT OCR      |
       | • QR Analyzer    |                                  | • Heuristics     |
       | • ReportLab PDF  |                                  +------------------+
       +------------------+                                           |
@@ -102,7 +102,7 @@ Unlike basic scanners that treat threat vectors in silos, CYBER RAKSHA AI introd
 Double-click `run.bat` in the root directory. This will:
 1. Start the FastAPI backend on `http://localhost:8000`
 2. Start the Vite React frontend on `http://localhost:5173`
-3. Automatically seed demo accounts, threat clusters, and telemetry
+3. Automatically seed initial administrative accounts, threat clusters, and baseline telemetry
 
 ### Option 2: Manual Terminal Startup
 
@@ -131,9 +131,9 @@ docker-compose up --build
 
 ---
 
-## 🔑 Demo Login Credentials & Authentication Architecture
+## 🔑 Initial System Credentials & Authentication Architecture
 
-The login page (`/login`) includes **1-Click Demo Login** buttons as well as standard credential login:
+The platform supports self-registration via `/register` as well as the following pre-seeded administrative and test accounts (stored in SQLite/PostgreSQL with PBKDF2 cryptography):
 
 | Role | Email | Password | Scope & Permissions |
 | :--- | :--- | :--- | :--- |
@@ -152,13 +152,13 @@ The login page (`/login`) includes **1-Click Demo Login** buttons as well as sta
 
 ## 🧪 Automated Test Suite
 
-Run the complete 17-test automated test suite covering authentication, token pairs, session rotation, RBAC, PII redaction, ML classifiers, fusion engine, and API endpoints:
+Run the complete 26-test automated test suite covering native WinRT OCR extraction, live HTML DOM scanning, authentication, token pairs, session rotation, RBAC, PII redaction, ML classifiers, fusion engine, and API endpoints:
 
 ```powershell
 $env:PYTHONPATH="backend"
 python -m pytest tests/ -v
 ```
-**Results:** `17 passed in ~3 seconds`
+**Results:** `26 passed in ~4 seconds`
 
 ---
 
@@ -172,21 +172,21 @@ CYBER RAKSHA AI is built exclusively for **defensive security monitoring, digita
 
 ---
 
-## 🌐 Live Production Demo
+## 🌐 Live Production Deployment
 
 Experience the **CYBER RAKSHA AI** defense platform live on Vercel:
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-cyber--raksha--ai--ayw5.vercel.app-00f2fe?style=for-the-badge&logo=vercel&logoColor=white)](https://cyber-raksha-ai-ayw5.vercel.app)
+[![Live Platform](https://img.shields.io/badge/Live%20Platform-cyber--raksha--ai--ayw5.vercel.app-00f2fe?style=for-the-badge&logo=vercel&logoColor=white)](https://cyber-raksha-ai-ayw5.vercel.app)
 
 * **Production URL:** [https://cyber-raksha-ai-ayw5.vercel.app](https://cyber-raksha-ai-ayw5.vercel.app)
 * **Alternative Deployment URL:** [https://cyber-raksha-ai-ayw5-70et1po6f-chaithu4.vercel.app](https://cyber-raksha-ai-ayw5-70et1po6f-chaithu4.vercel.app)
 
-### 🔑 1-Click Demo Accounts:
+### 🔑 Initial Registered Credentials:
 | Role | Email | Password |
 | :--- | :--- | :--- |
-| **Citizen** | `citizen@cyberraksha.gov.in` | `Citizen@123` *(or `demo123`)* |
-| **Organization** | `org@infosec-defense.in` | `OrgAdmin@123` *(or `demo123`)* |
-| **Administrator** | `admin@cyberraksha.gov.in` | `CyberRaksha@Admin2026` *(or `demo123`)* |
+| **Citizen** | `citizen@cyberraksha.gov.in` | `Citizen@123` |
+| **Organization** | `org@infosec-defense.in` | `OrgAdmin@123` |
+| **Administrator** | `admin@cyberraksha.gov.in` | `CyberRaksha@Admin2026` |
 
 ---
 

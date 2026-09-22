@@ -23,10 +23,10 @@ echo  CYBER RAKSHA AI is now launching!
 echo  Backend:  http://localhost:8000 (API Docs: http://localhost:8000/docs)
 echo  Frontend: http://localhost:5173
 echo  
-echo  1-Click Demo Accounts available on Login page:
-echo    - Citizen:      citizen@cyberraksha.gov.in (demo123 or Citizen@123)
-echo    - Organization: org@infosec-defense.in (demo123 or OrgAdmin@123)
-echo    - Admin:        admin@cyberraksha.gov.in (demo123 or CyberRaksha@Admin2026)
+echo  Default Initial Accounts (or register on the register page):
+echo    - Citizen:      citizen@cyberraksha.gov.in (Citizen@123)
+echo    - Organization: org@infosec-defense.in (OrgAdmin@123)
+echo    - Admin:        admin@cyberraksha.gov.in (CyberRaksha@Admin2026)
 echo =========================================================================
 echo.
 echo Opening browser to http://localhost:5173...

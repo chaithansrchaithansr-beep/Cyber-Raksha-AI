@@ -27,8 +27,8 @@ export const LoginPage: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   // Form states
-  const [email, setEmail] = useState<string>("citizen@cyberraksha.gov.in");
-  const [password, setPassword] = useState<string>("Citizen@123");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
@@ -112,10 +112,14 @@ export const LoginPage: React.FC = () => {
 
   const handleRoleSelect = (r: Role) => {
     setSelectedRole(r);
-    setEmail(roleConfigs[r].defaultEmail);
-    setPassword(roleConfigs[r].defaultPass);
     setError(null);
     setSuccessMsg(null);
+  };
+
+  const handleFillTestCredentials = () => {
+    setEmail(roleConfigs[selectedRole].defaultEmail);
+    setPassword(roleConfigs[selectedRole].defaultPass);
+    setError(null);
   };
 
   const handleRoleRedirect = (role: Role) => {
@@ -142,20 +146,6 @@ export const LoginPage: React.FC = () => {
       }, 400);
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please verify your credentials or select an authorized portal tier.');
-    }
-  };
-
-  const handleQuickConnect = async () => {
-    setError(null);
-    setSuccessMsg(null);
-    try {
-      const user = await quickLogin(selectedRole);
-      setSuccessMsg(`Session established for ${roleConfigs[selectedRole].title}. Loading portal...`);
-      setTimeout(() => {
-        handleRoleRedirect(user.role);
-      }, 350);
-    } catch (err: any) {
-      setError(err.message || 'Authentication gateway unreachable.');
     }
   };
 
@@ -288,13 +278,12 @@ export const LoginPage: React.FC = () => {
                 </label>
                 <button
                   type="button"
-                  onClick={handleQuickConnect}
-                  disabled={isLoading}
-                  className="text-[11px] text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1 hover:underline disabled:opacity-50"
-                  title="Direct connect with authorized tier credentials"
+                  onClick={handleFillTestCredentials}
+                  className="text-[11px] text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1 hover:underline"
+                  title="Autofill authorized credentials for this security tier"
                 >
                   <Key className="w-3 h-3" />
-                  <span>Use Tier Authorization</span>
+                  <span>Use Tier Credentials</span>
                 </button>
               </div>
 

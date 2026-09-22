@@ -55,7 +55,7 @@ export const AdminDashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
-      {/* Header with Live Presentation Simulator */}
+      {/* Header with Live SecOps Command Controls */}
       <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-purple-500/30 bg-gradient-to-r from-purple-500/10 via-slate-900/80 to-blue-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">

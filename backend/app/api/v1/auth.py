@@ -139,8 +139,6 @@ async def login(credentials: UserLogin, request: Request, db: AsyncSession = Dep
     if user:
         if verify_password(credentials.password, user.password_hash):
             is_valid_password = True
-        elif settings.DEMO_MODE and credentials.password in ("demo123", "Demo@123", "CyberRaksha@Admin2026", "Citizen@123", "OrgAdmin@123"):
-            is_valid_password = True
 
     if not user or not is_valid_password:
         record_failed_attempt(rate_key)
@@ -318,7 +316,7 @@ async def forgot_password(req: ForgotPasswordRequest, db: AsyncSession = Depends
         db.add(reset_entry)
         await db.commit()
 
-        if settings.DEMO_MODE or not settings.EMAIL_SERVICE_CONFIGURED:
+        if not settings.EMAIL_SERVICE_CONFIGURED:
             dev_token = raw_token
 
     return {

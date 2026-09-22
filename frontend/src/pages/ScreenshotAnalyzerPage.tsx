@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import { ScanResult } from '../types';
 import { RiskGauge } from '../components/RiskGauge';
 import { ThreatBadge } from '../components/ThreatBadge';
-import { Camera, Upload, ShieldAlert, Download, CheckCircle2, AlertTriangle, RefreshCw, FileImage } from 'lucide-react';
+import { Camera, Upload, ShieldAlert, Download, CheckCircle2, AlertTriangle, RefreshCw, FileText } from 'lucide-react';
 
 export const ScreenshotAnalyzerPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -17,6 +17,8 @@ export const ScreenshotAnalyzerPage: React.FC = () => {
       const selected = e.target.files[0];
       setFile(selected);
       setPreview(URL.createObjectURL(selected));
+      setResult(null);
+      setError(null);
     }
   };
 
@@ -35,28 +37,16 @@ export const ScreenshotAnalyzerPage: React.FC = () => {
     }
   };
 
-  const loadSimulatedFakeReceipt = async () => {
-    try {
-      // 300x150 valid PNG binary representation
-      const b64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWAQMAAABx81jHAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQUlEQVRYhe3BMQEAAADCoPVPbQhfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvBh/cAABh68HggAAAABJRU5ErkJggg==";
-      const res = await fetch(b64);
-      const blob = await res.blob();
-      const dummyFile = new File([blob], "fake_payment_receipt_phonepe.png", { type: "image/png" });
-      setFile(dummyFile);
-      setPreview("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'><rect width='300' height='200' fill='%230b132b'/><text x='50%25' y='45%25' fill='%2310b981' font-size='16' font-family='sans-serif' text-anchor='middle'>Payment Successful</text><text x='50%25' y='65%25' fill='%23ffffff' font-size='20' font-weight='bold' font-family='sans-serif' text-anchor='middle'>₹ 15,000.00</text></svg>");
-    } catch (_) {}
-  };
-
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
       <div>
         <div className="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-wider">
           <Camera className="w-4 h-4" />
-          <span>Module 05 • Computer Vision & OCR Heuristics</span>
+          <span>Module 05 • Computer Vision & OCR Forensics</span>
         </div>
         <h1 className="text-3xl font-black text-white mt-1">Screenshot-Based Scam Detection</h1>
         <p className="text-slate-400 text-xs sm:text-sm mt-1">
-          Detects manipulated payment receipts, synthetic UPI transaction confirmations, and social engineering text embedded in images.
+          Performs optical character recognition (OCR) and visual forensic analysis on payment screenshots, transaction receipts, and chat captures.
         </p>
       </div>
 
@@ -82,19 +72,15 @@ export const ScreenshotAnalyzerPage: React.FC = () => {
 
             {preview && (
               <div className="mt-4 flex justify-center">
-                <img src={preview} alt="Preview" className="max-h-40 rounded-xl border border-slate-700 object-contain shadow-lg" />
+                <img src={preview} alt="Preview" className="max-h-48 rounded-xl border border-slate-700 object-contain shadow-lg" />
               </div>
             )}
           </div>
 
           <div className="flex items-center justify-between pt-1">
-            <button
-              type="button"
-              onClick={loadSimulatedFakeReceipt}
-              className="text-xs text-purple-400 hover:text-purple-300 font-semibold underline"
-            >
-              Load Simulated Fake UPI Receipt Sample
-            </button>
+            <span className="text-[11px] text-slate-500 font-mono">
+              {file ? `${file.name} (${(file.size / 1024).toFixed(1)} KB)` : "Upload genuine screenshot from your device"}
+            </span>
 
             <button
               type="submit"
@@ -104,7 +90,7 @@ export const ScreenshotAnalyzerPage: React.FC = () => {
               {loading ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Processing Image & OCR...</span>
+                  <span>Processing Native OCR...</span>
                 </>
               ) : (
                 <>
@@ -143,19 +129,31 @@ export const ScreenshotAnalyzerPage: React.FC = () => {
               <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
                   <ShieldAlert className="w-3.5 h-3.5" />
-                  Visual Analysis Findings
+                  Analysis Summary
                 </span>
                 <p className="text-xs text-slate-300 leading-relaxed">{result.ai_explanation}</p>
               </div>
+
+              {result.details?.extracted_text && (
+                <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-1.5">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    Extracted Text from Image (Native OCR)
+                  </span>
+                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-slate-200 max-h-32 overflow-y-auto whitespace-pre-wrap">
+                    {result.details.extracted_text}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Computer Vision Indicators</h4>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Forensic Indicators</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {result.detected_indicators.map((ind, i) => (
                 <div key={i} className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-xs text-slate-200 flex items-center gap-2">
-                  <span className="text-red-400 font-bold">⚠</span>
+                  <span className="text-amber-400 font-bold">✓</span>
                   <span>{ind}</span>
                 </div>
               ))}
@@ -163,7 +161,7 @@ export const ScreenshotAnalyzerPage: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-300">Citizen Advice</h4>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-300">Citizen Defense Advice</h4>
             <ul className="space-y-1">
               {result.recommendations.map((rec, i) => (
                 <li key={i} className="text-xs text-amber-100 flex items-center gap-2">

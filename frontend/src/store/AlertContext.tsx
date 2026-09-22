@@ -22,27 +22,7 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const data = await api.alerts.getAlerts();
       setAlerts(data);
     } catch (e) {
-      // Fallback alerts
-      setAlerts([
-        {
-          id: 1,
-          title: "🚨 Active Phishing: Fake SBI YONO APK targeting Android users",
-          message: "Malicious APK distributed via SMS claiming urgent reward point redemption.",
-          severity: "critical",
-          category: "phishing",
-          active: true,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 2,
-          title: "⚠ Surge in DISCOM Electricity Bill Disconnection Scams",
-          message: "Consumers in northern states targeted with fraudulent power cut warnings.",
-          severity: "high",
-          category: "kyc_scam",
-          active: true,
-          created_at: new Date().toISOString()
-        }
-      ]);
+      console.warn("Could not load initial threat alerts from backend", e);
     }
   };
 
@@ -70,19 +50,9 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const simulateThreatEvent = async () => {
     try {
       await api.alerts.simulateThreatEvent();
+      await fetchAlerts();
     } catch (e) {
-      // Offline fallback simulation
-      const simulated: AlertItem = {
-        id: Date.now(),
-        title: `🚨 [SIMULATED EVENT] FastPay UPI Impersonation Wave (${new Date().toLocaleTimeString()})`,
-        message: "Threat Fusion Engine detected coordinated APK download + SMS phishing campaign targeting Indian UPI users.",
-        severity: "critical",
-        category: "upi_fraud",
-        active: true,
-        created_at: new Date().toISOString()
-      };
-      setAlerts((prev) => [simulated, ...prev]);
-      setLiveNotification(simulated);
+      console.error("Failed to run SecOps threat drill", e);
     }
   };
 

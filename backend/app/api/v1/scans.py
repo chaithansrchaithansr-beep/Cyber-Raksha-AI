@@ -167,26 +167,117 @@ async def scan_website(
     current_user: Optional[User] = Depends(get_current_user_optional),
     db: AsyncSession = Depends(get_db)
 ):
-    prob, indicators, features = url_classifier.predict(req.url)
-    indicators.append("Visual DOM Inspection: Simulated credential harvesting form detected")
-    indicators.append("SSL Certificate: Free/Automated issuer without EV corporate validation")
-    if req.simulated_brand or features.get("brand_impersonation"):
-        target_b = req.simulated_brand or features.get("brand_impersonation")
-        indicators.append(f"Visual Similarity: 84% brand match to official {target_b} portal")
+    import re
+    from urllib.parse import urlparse
+    import httpx
 
+    prob, url_indicators, features = url_classifier.predict(req.url)
+    indicators = list(url_indicators)
+
+    raw_url = req.url if "://" in req.url else f"http://{req.url}"
+    parsed = urlparse(raw_url)
+    target_brand = req.simulated_brand or features.get("brand_impersonation")
+    is_live = False
+    html_content = ""
+    status_code = None
+    credential_inputs: List[str] = []
+    page_title = ""
+    is_https = parsed.scheme.lower() == "https"
+
+    if is_https:
+        indicators.append("Protocol: Transport Layer Security (HTTPS) verified")
+    else:
+        indicators.append("Security Vulnerability: Insecure plain HTTP connection (No SSL encryption)")
+
+    try:
+        async with httpx.AsyncClient(
+            timeout=6.0,
+            follow_redirects=True,
+            verify=False,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CyberRakshaDefenseBot/1.0"}
+        ) as client:
+            resp = await client.get(raw_url)
+            status_code = resp.status_code
+            html_content = resp.text[:150000]
+            is_live = True
+            indicators.append(f"Live Network Fetch: HTTP {status_code} ({len(html_content)} bytes retrieved)")
+    except httpx.ConnectTimeout:
+        indicators.append("Network Probe: Host connection timed out (server unreachable)")
+    except httpx.ConnectError:
+        indicators.append("Network Probe: Unable to resolve hostname or establish socket connection")
+    except Exception as e:
+        indicators.append(f"Network Probe Notice: Server returned connection alert ({type(e).__name__})")
+
+    if is_live and html_content:
+        # Extract title
+        title_match = re.search(r'<title[^>]*>(.*?)</title>', html_content, re.IGNORECASE | re.DOTALL)
+        if title_match:
+            page_title = title_match.group(1).strip()
+            indicators.append(f"DOM Title: '{page_title[:60]}'")
+
+        # Detect forms and inputs
+        forms = re.findall(r'<form\b[^>]*>(.*?)</form>', html_content, re.IGNORECASE | re.DOTALL)
+        if forms:
+            indicators.append(f"DOM Structure: Detected {len(forms)} interactive form elements")
+
+        # Check for sensitive inputs
+        input_tags = re.findall(r'<input\b[^>]*>', html_content, re.IGNORECASE)
+        for inp in input_tags:
+            t_match = re.search(r'type=[\'"]([^\'"]+)[\'"]', inp, re.IGNORECASE)
+            n_match = re.search(r'name=[\'"]([^\'"]+)[\'"]', inp, re.IGNORECASE)
+            inp_type = (t_match.group(1) if t_match else "text").lower()
+            inp_name = (n_match.group(1) if n_match else "").lower()
+
+            if inp_type == "password":
+                credential_inputs.append("Password Input")
+            for kw in ["pin", "otp", "cvv", "card", "pan", "aadhaar", "account", "token", "mpin"]:
+                if kw in inp_name:
+                    credential_inputs.append(f"Sensitive Field: '{kw.upper()}'")
+
+        if credential_inputs:
+            unique_creds = list(set(credential_inputs))
+            indicators.append(f"Credential Harvesting Risk: Detected sensitive fields ({', '.join(unique_creds[:5])})")
+
+        # Brand mismatch detection in real HTML
+        if target_brand:
+            brand_in_html = target_brand.lower() in html_content.lower() or (page_title and target_brand.lower() in page_title.lower())
+            domain = parsed.netloc.lower()
+            official_domains = ["sbi.co.in", "onlinesbi.sbi", "hdfcbank.com", "icicibank.com", "incometax.gov.in", "paytm.com", "gov.in"]
+            if brand_in_html and not any(kw in domain for kw in official_domains):
+                indicators.append(f"Brand Impersonation: Page content targets '{target_brand}' while hosted on unverified domain '{domain}'")
+
+    evidence_penalty = 0.0
+    if credential_inputs:
+        evidence_penalty += 35.0
+    if not is_https:
+        evidence_penalty += 20.0
+    if any("Brand Impersonation" in ind for ind in indicators):
+        evidence_penalty += 35.0
+
+    raw_score = min(100.0, (prob * 50.0) + evidence_penalty)
     risk_score, confidence, classification = scoring_engine.compute_weighted_score(
-        ml_probability=min(0.96, prob + 0.15),
-        rule_penalty=min(100.0, (prob * 100) + 20),
-        threat_intel_match=True,
-        brand_impersonated=True
+        ml_probability=min(0.99, max(prob, raw_score / 100.0)),
+        rule_penalty=raw_score,
+        threat_intel_match=bool(credential_inputs or not is_https),
+        brand_impersonated=bool(any("Brand Impersonation" in ind for ind in indicators))
     )
 
-    integrity_hash = compute_sha256(f"{req.url}|web|{risk_score}")
-    ai_exp = "Website demonstrates credential harvesting form signatures and high visual similarity to target banking / government interface."
+    integrity_hash = compute_sha256(f"{req.url}|web|{risk_score}|{time.time()}")
+    if risk_score >= 75.0:
+        ai_exp = f"Critical Risk: Destination '{parsed.netloc}' exhibits severe credential harvesting or brand impersonation signatures."
+    elif risk_score >= 50.0:
+        ai_exp = f"High Risk: Destination '{parsed.netloc}' solicits sensitive inputs without verified organizational authentication."
+    elif not is_live:
+        ai_exp = f"Host Unreachable: Destination '{parsed.netloc}' did not respond to live HTTP/HTTPS connection probes."
+    else:
+        ai_exp = f"Low Risk: Live DOM inspection of '{parsed.netloc}' completed with no malicious harvesting signatures observed."
+
     recs = [
         "Do not enter netbanking credentials, debit card numbers, or ATM PINs.",
         "Close browser tab immediately and flush browser cache.",
         "File report with National Cyber Crime Reporting Portal."
+    ] if risk_score >= 50 else [
+        "Destination analyzed. Continue observing standard cyber safety practices."
     ]
 
     scan = Scan(
@@ -200,8 +291,14 @@ async def scan_website(
         detected_indicators=indicators,
         ai_explanation=ai_exp,
         recommendations=recs,
-        details={"brand": req.simulated_brand or features.get("brand_impersonation", "Bank")},
-        analysis_method="Brand Impersonation & DOM Visual Heuristics",
+        details={
+            "brand": target_brand or "N/A",
+            "page_title": page_title,
+            "status_code": status_code,
+            "is_live": is_live,
+            "is_https": is_https
+        },
+        analysis_method="Live Network & DOM Visual Forensics",
         report_integrity_hash=integrity_hash
     )
     db.add(scan)
@@ -218,11 +315,12 @@ async def scan_screenshot(
     content = await file.read()
     res = ocr_service.analyze_image_bytes(content, filename=file.filename or "")
 
-    risk = res.get("risk_score", 50.0)
-    conf = res.get("confidence", 75.0)
+    risk = res.get("risk_score", 15.0)
+    conf = res.get("confidence", 85.0)
     indicators = res.get("indicators", ["Visual image analysis completed"])
-    threat_t = res.get("threat_type", "Manipulated Image / Screenshot")
-    extracted_preview = (res.get("extracted_text") or "")[:100]
+    threat_t = res.get("threat_type", "Benign Image / Valid Screenshot")
+    extracted_text = res.get("extracted_text", "")
+    extracted_preview = extracted_text[:120] if extracted_text else "No text extracted"
 
     integrity_hash = compute_sha256(f"{file.filename}|{risk}|{time.time()}")
     classification = scoring_engine.classify_risk(risk)
@@ -231,7 +329,7 @@ async def scan_screenshot(
         "Always verify settlement directly inside your official merchant banking or UPI app statement.",
         "Report fake payment receipt generator activity to law enforcement."
     ] if risk > 50 else [
-        "Screenshot appears standard. Verify monetary balances in official bank portal."
+        "Screenshot analyzed. Always verify monetary transactions in official bank statement."
     ]
 
     scan = Scan(
@@ -243,10 +341,15 @@ async def scan_screenshot(
         risk_score=risk,
         confidence=conf,
         detected_indicators=indicators,
-        ai_explanation=f"OCR & Image Heuristics: {threat_t}. Extracted: {extracted_preview}...",
+        ai_explanation=f"OCR & Image Forensics: {threat_t}. Extracted text preview: '{extracted_preview}'",
         recommendations=recs,
-        details={"dimensions": res.get("dimensions"), "format": res.get("format")},
-        analysis_method=res.get("analysis_method", "Receipt OCR & Visual Heuristic Engine"),
+        details={
+            "dimensions": res.get("dimensions"),
+            "format": res.get("format"),
+            "extracted_text": extracted_text,
+            "is_fake_receipt": res.get("is_fake_receipt", False)
+        },
+        analysis_method=res.get("analysis_method", "Native Windows OCR & Visual Forensics"),
         report_integrity_hash=integrity_hash
     )
     db.add(scan)

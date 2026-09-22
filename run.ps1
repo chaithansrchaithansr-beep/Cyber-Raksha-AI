@@ -48,11 +48,11 @@ Write-Host "  CYBER RAKSHA AI platform is running!" -ForegroundColor Green
 Write-Host "  Backend API:  http://localhost:8000 (Swagger: http://localhost:8000/docs)" -ForegroundColor White
 Write-Host "  Frontend App: http://localhost:5173" -ForegroundColor White
 Write-Host ""
-Write-Host "  1-Click Demo Accounts (or use quick-login buttons on login page):" -ForegroundColor Cyan
-Write-Host "    - Citizen:      citizen@cyberraksha.gov.in (demo123 or Citizen@123)" -ForegroundColor Gray
-Write-Host "    - Organization: org@infosec-defense.in (demo123 or OrgAdmin@123)" -ForegroundColor Gray
-Write-Host "    - Admin:        admin@cyberraksha.gov.in (demo123 or CyberRaksha@Admin2026)" -ForegroundColor Gray
-Write-Host "=========================================================================" -ForegroundColor Green
+Write-Host "  Default Initial Accounts (or register your own account on the register page):
+    - Citizen:      citizen@cyberraksha.gov.in (Citizen@123)
+    - Organization: org@infosec-defense.in (OrgAdmin@123)
+    - Admin:        admin@cyberraksha.gov.in (CyberRaksha@Admin2026)
+=====================================================================================" -ForegroundColor Green
 Write-Host ""
 
 Write-Host "Launching platform in default browser..." -ForegroundColor Cyan

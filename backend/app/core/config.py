@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///cyber_raksha.db"
     REDIS_URL: str = "redis://localhost:6379/0"
     USE_REDIS: bool = False
-    DEMO_MODE: bool = True
+    DEMO_MODE: bool = False
     EMAIL_SERVICE_CONFIGURED: bool = False
     MAX_UPLOAD_SIZE_MB: int = 10
     CREATE_INITIAL_ADMIN: bool = True

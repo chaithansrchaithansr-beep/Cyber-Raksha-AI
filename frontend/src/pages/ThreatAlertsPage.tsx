@@ -21,7 +21,7 @@ export const ThreatAlertsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
-      {/* Header with Live Status and Demo Simulation Button */}
+      {/* Header with Live Status and SecOps Drill Trigger */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-red-400 text-xs font-bold uppercase tracking-wider">
@@ -46,7 +46,7 @@ export const ThreatAlertsPage: React.FC = () => {
             className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)] flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50"
           >
             <Zap className={`w-3.5 h-3.5 ${simulating ? 'animate-spin' : ''}`} />
-            <span>Simulate Live Alert</span>
+            <span>Run SecOps Drill</span>
           </button>
         </div>
       </div>
